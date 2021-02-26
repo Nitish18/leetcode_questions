@@ -5,32 +5,30 @@ class Solution:
 
         # initializing DP matrix with some default value.
         dp_matrix = []
-        for i in range(n):
+        for i in range(n+1):
             tmp = []
-            for j in range(n):
-                tmp.append(False)
+            for j in range(m+1):
+                tmp.append(0)
             dp_matrix.append(tmp)
 
+        dp_matrix[0][0] = 0
+
         # filling values that are known
-        for i in range(n):
-            for j in range(n):
-                if i == j:
-                    dp_matrix[i][j] = True
-                elif j < n and i < n and j == i + 1 and s[i] == s[j]:
-                    dp_matrix[i][j] = True
+        for i in range(n+1):
+            for j in range(m+1):
+                if i == 0 and j != 0:
+                    dp_matrix[i][j] = j
+                elif j == 0 and i != 0:
+                    dp_matrix[i][j] = i
 
-        for i in range(n-1, -1, -1):
-            for j in range(n):
-                if i+1<n and j-1>=0 and dp_matrix[i + 1][j - 1] and s[i] == s[j]:
-                    dp_matrix[i][j] = True
+        # word1 = horse, n = 5
+        # word2 = ros, m = 3
 
-        max_length_subarray = ''
-        max_length = float('-inf')
+        for i in range(1, n+1):
+            for j in range(1, m+1):
+                if word1[i-1] == word2[j-1]:
+                    dp_matrix[i][j] = dp_matrix[i-1][j-1]
+                else:
+                    dp_matrix[i][j] = min(dp_matrix[i-1][j-1] + 1, dp_matrix[i][j-1] + 1, dp_matrix[i-1][j] + 1)
 
-        for i in range(n):
-            for j in range(n):
-                k = j - i
-                if dp_matrix[i][j] and k>=max_length:
-                    max_length_subarray = s[i:j+1]
-                    max_length = j-i+1
-        return max_length_subarray
+        return dp_matrix[n][m]
